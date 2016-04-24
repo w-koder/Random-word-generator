@@ -1,7 +1,3 @@
-# i suppose that someone going to create a code that parse antlr grammar to my structure
-# the structure agreed with G.N. Zholtkevych
-# for example i start to work with palindrome's grammar
-
 import random
 
 
