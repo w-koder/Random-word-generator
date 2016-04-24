@@ -1,0 +1,1 @@
+I start my work public. I try to generate random words of grammar for checking the open source Ruby grammar.
