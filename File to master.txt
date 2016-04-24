@@ -1,0 +1,2 @@
+My first new file.
+I try to commit it to master.
