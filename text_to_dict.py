@@ -34,7 +34,6 @@ def text_to_dict(file ):
             else:
                 rules_dict[rule[0]] = rule[1]
 
-    print(rules_dict)
     #implementig sort of KOSTYL to be able to split rules by |
     #Do not look at it if you want to be mentally health
     #Please, do not
@@ -59,7 +58,6 @@ def text_to_dict(file ):
                     else :
                         new_rule += rule[kostyl_places[i] + 1:]
                     #I've warned you: do not look
-
                 rules_dict[key] = new_rule
 
     kostyl_implementation(rules_dict)
@@ -70,7 +68,6 @@ def text_to_dict(file ):
         for subrule in rule.split("|"):
             new_rules.append (subrule.replace("T.H.E.K.O.S.T.Y.L", "|"))
         rules_dict[key] = new_rules
-
 
     for key, rule in tokens_dict.items():
         new_rules = rule.split("|")
