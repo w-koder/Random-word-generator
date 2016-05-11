@@ -1,5 +1,5 @@
-#Returns tuple (rules_dictionary, tokens_dictionary)
-def text_to_dict(file,  rough_splitting_by_bars = False):
+# Returns tuple (rules_dictionary, tokens_dictionary)
+def text_to_dict(file,  rough_splitting_by_bars=False):
     rules_dict = {}
     tokens_dict = {}
     grammar_text = ""
@@ -44,7 +44,7 @@ def text_to_dict(file,  rough_splitting_by_bars = False):
                 and not braces_trigger):
                 grammar_text += file_line[char_index];
 
-    #Splitting inputed text to rules and spreading rules across dictionaries
+    # Splitting inputed text to rules and spreading rules across dictionaries
     for line in grammar_text.split(';'):
         if line != '':
             if (line.startswith("grammar")
@@ -56,9 +56,8 @@ def text_to_dict(file,  rough_splitting_by_bars = False):
             else:
                 rules_dict[rule[0]] = rule[1]
 
-    if (rough_splitting_by_bars):
-
-        #implementig sort of service string to be able to split rules by |
+    if rough_splitting_by_bars:
+        # implementig sort of service string to be able to split rules by |
         def service_string_implementation (dict):
             for key, rule in dict.items():
                 quotes_count = 0
@@ -96,5 +95,4 @@ def text_to_dict(file,  rough_splitting_by_bars = False):
                 new_rules.append(subrule.replace("%SERVICE_STRING%", "|"))
             tokens_dict[key] = new_rules
 
-
-    return (rules_dict, tokens_dict)
+    return rules_dict, tokens_dict
