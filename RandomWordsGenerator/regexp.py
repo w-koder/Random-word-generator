@@ -1,7 +1,7 @@
 # It finally works!
 # Though still only for numbers
 # And there's one thing I don't get:
-# Check-prints shows that it works just fine
+# Check-prints show that it works just fine
 # But final print(object) returns empty string
 
 import random
