@@ -11,6 +11,7 @@ def text_to_dict(file,  rough_splitting_by_bars=False):
 
     for file_line in file:
         file_line = file_line.replace(' operator ', ' ')
+        file_line = file_line.replace(' op= ', ' ')
         for char_index in range(len(file_line)):
 
             if (file_line[char_index] == '\''
@@ -83,9 +84,61 @@ def text_to_dict(file,  rough_splitting_by_bars=False):
         service_string_implementation(rules_dict)
         service_string_implementation(tokens_dict)
 
+        def split_rule_by_bar(rule):
+            screened_trigger = False
+            brackets_counter = 0
+            brackets_position = []
+            retrieved_subrules = []
+            for char_index in range(len(rule)):
+                if rule[char_index] == '\'':
+                    screened_trigger ^= True
+
+                if (rule[char_index] == '('
+                    and not screened_trigger):
+                    if brackets_counter == 0:
+                        brackets_position.append([char_index, 0])
+                    brackets_counter += 1
+
+                if (rule[char_index] == ')'
+                    and not screened_trigger):
+                    brackets_counter -= 1
+                    if brackets_counter == 0:
+                        brackets_position[-1][1] = char_index
+
+            for pair in brackets_position:
+                retrieved_subrules.append(split_rule_by_bar(rule[pair[0]+1:pair[1]]))
+
+            if len(retrieved_subrules) == 0:
+                return rule.split("|")
+            else:
+                subrule_combinations = [[x] for x in retrieved_subrules.pop(0)]
+
+                for subrule_set in retrieved_subrules:
+                    new_combinations = []
+                    for subrule in subrule_set:
+                        for combination in subrule_combinations:
+                            new_combinations.append(combination + [subrule])
+                    subrule_combinations = new_combinations
+
+                new_rules = []
+                for subrule_set in subrule_combinations:
+                    current_rule = rule[:brackets_position[0][0]]
+                    for pair_index in range(len(brackets_position)-1):
+                        current_rule += subrule_set[pair_index]
+                        current_rule += rule[brackets_position[pair_index][1]+1:brackets_position[pair_index+1][0]]
+                    if brackets_position[-1][1] < len(rule):
+                        current_rule += subrule_set[-1] + rule[brackets_position[-1][1]+1:]
+                    else:
+                        current_rule += current_rule[-1]
+
+                    for new_rule in split_rule_by_bar(current_rule):
+                        new_rules.append(new_rule)
+
+                return new_rules
+
         for key, rule in rules_dict.items():
             new_rules = []
-            for subrule in rule.split("|"):
+            for subrule in split_rule_by_bar(rule):
                 new_rules.append (subrule.replace("%SERVICE_STRING%", "|"))
             rules_dict[key] = new_rules
 
