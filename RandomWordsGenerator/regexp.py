@@ -73,8 +73,12 @@ def fill(RE, i, object) -> object:
                     j += 1
                 i = j + 1
         elif re.match("\'", RE[i]):
-            object += RE[i+1]
-            i += 3
+            j = i + 1
+            while re.match("\'", RE[j]) is None:
+                object += RE[j]
+                print("quote ", object)
+                j += 1
+            i += j + 1
         else:
             if i+1 < RE.__len__():
                 flag = 0
