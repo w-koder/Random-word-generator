@@ -55,9 +55,9 @@ expression : function_definition
            | pir_inline
            ;
 
-global_get : var_name=lvalue op=ASSIGN global_name=id_global;
+global_get : lvalue ASSIGN id_global;
 
-global_set : global_name=id_global op=ASSIGN result=all_result;
+global_set : id_global ASSIGN all_result;
 
 global_result : id_global;
 
@@ -94,9 +94,9 @@ function_definition_param_id : id;
 
 return_statement : RETURN all_result;
 
-function_call : name=function_name LEFT_RBRACKET params=function_call_param_list RIGHT_RBRACKET
-              | name=function_name params=function_call_param_list
-              | name=function_name LEFT_RBRACKET RIGHT_RBRACKET
+function_call : function_name LEFT_RBRACKET function_call_param_list RIGHT_RBRACKET
+              | function_name function_call_param_list
+              | function_name LEFT_RBRACKET RIGHT_RBRACKET
               ;
 
 function_call_param_list : function_call_params;
@@ -109,7 +109,7 @@ function_param : ( function_unnamed_param | function_named_param );
 
 function_unnamed_param : ( int_result | float_result | string_result | dynamic_result );
 
-function_named_param : id op=ASSIGN ( int_result | float_result | string_result | dynamic_result );
+function_named_param : id ASSIGN ( int_result | float_result | string_result | dynamic_result );
 
 function_call_assignment : function_call;
 
@@ -164,29 +164,29 @@ statement_expression_list : expression terminator
                           | statement_expression_list break_expression terminator
                           ;
 
-assignment : var_id=lvalue op=ASSIGN rvalue
-           | var_id=lvalue op=( PLUS_ASSIGN | MINUS_ASSIGN | MUL_ASSIGN | DIV_ASSIGN | MOD_ASSIGN | EXP_ASSIGN ) rvalue
+assignment : lvalue ASSIGN rvalue
+           | lvalue ( PLUS_ASSIGN | MINUS_ASSIGN | MUL_ASSIGN | DIV_ASSIGN | MOD_ASSIGN | EXP_ASSIGN ) rvalue
            ;
 
-dynamic_assignment : var_id=lvalue op=ASSIGN dynamic_result
-                   | var_id=lvalue op=( PLUS_ASSIGN | MINUS_ASSIGN | MUL_ASSIGN | DIV_ASSIGN | MOD_ASSIGN | EXP_ASSIGN ) dynamic_result
+dynamic_assignment : lvalue ASSIGN dynamic_result
+                   | lvalue ( PLUS_ASSIGN | MINUS_ASSIGN | MUL_ASSIGN | DIV_ASSIGN | MOD_ASSIGN | EXP_ASSIGN ) dynamic_result
                    ;
 
-int_assignment : var_id=lvalue op=ASSIGN int_result
-               | var_id=lvalue op=( PLUS_ASSIGN | MINUS_ASSIGN | MUL_ASSIGN | DIV_ASSIGN | MOD_ASSIGN | EXP_ASSIGN ) int_result
+int_assignment : lvalue ASSIGN int_result
+               | lvalue ( PLUS_ASSIGN | MINUS_ASSIGN | MUL_ASSIGN | DIV_ASSIGN | MOD_ASSIGN | EXP_ASSIGN ) int_result
                ;
 
-float_assignment : var_id=lvalue op=ASSIGN float_result
-                 | var_id=lvalue op=( PLUS_ASSIGN | MINUS_ASSIGN | MUL_ASSIGN | DIV_ASSIGN | MOD_ASSIGN | EXP_ASSIGN ) float_result
+float_assignment : lvalue ASSIGN float_result
+                 | lvalue ( PLUS_ASSIGN | MINUS_ASSIGN | MUL_ASSIGN | DIV_ASSIGN | MOD_ASSIGN | EXP_ASSIGN ) float_result
                  ;
 
-string_assignment : var_id=lvalue op=ASSIGN string_result
-                  | var_id=lvalue op=PLUS_ASSIGN string_result
+string_assignment : lvalue ASSIGN string_result
+                  | lvalue PLUS_ASSIGN string_result
                   ;
 
-initial_array_assignment : var_id=lvalue op=ASSIGN LEFT_SBRACKET RIGHT_SBRACKET;
+initial_array_assignment : lvalue ASSIGN LEFT_SBRACKET RIGHT_SBRACKET;
 
-array_assignment : arr_def=array_selector op=ASSIGN arr_val=all_result;
+array_assignment : array_selector ASSIGN all_result;
 
 array_definition : LEFT_SBRACKET array_definition_elements RIGHT_SBRACKET;
 
@@ -198,18 +198,18 @@ array_selector : id LEFT_SBRACKET ( int_result | dynamic_result ) RIGHT_SBRACKET
                | id_global LEFT_SBRACKET ( int_result | dynamic_result ) RIGHT_SBRACKET
                ;
 
-dynamic_result : dynamic_result op=( MUL | DIV | MOD ) int_result
-               | int_result op=( MUL | DIV | MOD ) dynamic_result
-               | dynamic_result op=( MUL | DIV | MOD ) float_result
-               | float_result op=( MUL | DIV | MOD ) dynamic_result
-               | dynamic_result op=( MUL | DIV | MOD ) dynamic_result
-               | dynamic_result op=MUL string_result
-               | string_result op=MUL dynamic_result
-               | dynamic_result op=( PLUS | MINUS ) int_result
-               | int_result op=( PLUS | MINUS ) dynamic_result
-               | dynamic_result op=( PLUS | MINUS )  float_result               
-               | float_result op=( PLUS | MINUS )  dynamic_result                      
-               | dynamic_result op=( PLUS | MINUS ) dynamic_result
+dynamic_result : dynamic_result ( MUL | DIV | MOD ) int_result
+               | int_result ( MUL | DIV | MOD ) dynamic_result
+               | dynamic_result ( MUL | DIV | MOD ) float_result
+               | float_result ( MUL | DIV | MOD ) dynamic_result
+               | dynamic_result ( MUL | DIV | MOD ) dynamic_result
+               | dynamic_result MUL string_result
+               | string_result MUL dynamic_result
+               | dynamic_result ( PLUS | MINUS ) int_result
+               | int_result ( PLUS | MINUS ) dynamic_result
+               | dynamic_result ( PLUS | MINUS )  float_result               
+               | float_result ( PLUS | MINUS )  dynamic_result                      
+               | dynamic_result ( PLUS | MINUS ) dynamic_result
                | LEFT_RBRACKET dynamic_result RIGHT_RBRACKET
                | dynamic
                ;
@@ -219,38 +219,38 @@ dynamic : id
         | array_selector
         ;
 
-int_result : int_result op=( MUL | DIV | MOD ) int_result
-           | int_result op=( PLUS | MINUS ) int_result
+int_result : int_result ( MUL | DIV | MOD ) int_result
+           | int_result ( PLUS | MINUS ) int_result
            | LEFT_RBRACKET int_result RIGHT_RBRACKET       
            | int_t
            ;
 
-float_result : float_result op=( MUL | DIV | MOD ) float_result
-             | int_result op=( MUL | DIV | MOD ) float_result
-             | float_result op=( MUL | DIV | MOD ) int_result
-             | float_result op=( PLUS | MINUS ) float_result
-             | int_result op=( PLUS | MINUS )  float_result
-             | float_result op=( PLUS | MINUS )  int_result
+float_result : float_result ( MUL | DIV | MOD ) float_result
+             | int_result ( MUL | DIV | MOD ) float_result
+             | float_result ( MUL | DIV | MOD ) int_result
+             | float_result ( PLUS | MINUS ) float_result
+             | int_result ( PLUS | MINUS )  float_result
+             | float_result ( PLUS | MINUS )  int_result
              | LEFT_RBRACKET float_result RIGHT_RBRACKET
              | float_t
              ;
 
-string_result : string_result op=MUL int_result
-              | int_result op=MUL string_result
-              | string_result op=PLUS string_result
+string_result : string_result MUL int_result
+              | int_result MUL string_result
+              | string_result PLUS string_result
               | literal_t
               ;
 
-comparison_list : left=comparison op=BIT_AND right=comparison_list
-                | left=comparison op=AND right=comparison_list
-                | left=comparison op=BIT_OR right=comparison_list
-                | left=comparison op=OR right=comparison_list
+comparison_list : comparison BIT_AND comparison_list
+                | comparison AND comparison_list
+                | comparison BIT_OR comparison_list
+                | comparison OR comparison_list
                 | LEFT_RBRACKET comparison_list RIGHT_RBRACKET
                 | comparison
                 ;
 
-comparison : left=comp_var op=( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) right=comp_var
-           | left=comp_var op=( EQUAL | NOT_EQUAL ) right=comp_var
+comparison : comp_var ( LESS | GREATER | LESS_EQUAL | GREATER_EQUAL ) comp_var
+           | comp_var ( EQUAL | NOT_EQUAL ) comp_var
            ;
 
 comp_var : all_result
@@ -341,7 +341,7 @@ crlf : CRLF;
 LITERAL : '"'[a-zA-Z0-9_]*'"';
 
 COMMA : ',';  
-SEMICOLON : '@';
+SEMICOLON : '.';
 CRLF : '\n';
 
 REQUIRE : 'require';
@@ -385,14 +385,14 @@ MOD_ASSIGN : '%=';
 EXP_ASSIGN : '**=';
 
 BIT_AND : '&';
-BIT_OR : '|';
+BIT_OR : '$';
 BIT_XOR : '^';
 BIT_NOT : '~';
 BIT_SHL : '<<';
 BIT_SHR : '>>';
 
 AND : 'and' | '&&';
-OR : 'or' | '||';
+OR : 'or';
 NOT : 'not' | '!';
 
 LEFT_RBRACKET : '(';

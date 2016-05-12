@@ -1,7 +1,6 @@
 import random
 import numpy
 
-WORD_COUNT = 500
 MAX_CHANGE_COUNT = 500
 
 
@@ -43,41 +42,34 @@ def chose_rule_from_grammar(nonterminal, grammarToChose) -> str:
 def generate(grammarToGenerate):
     convergesCount = 0
 
-    for j in range(WORD_COUNT):
-       # word = "S"  # we always start with first nonterminal, with the first entry of dictionary
-        word = str(grammarToGenerate['prog'])
-        changeCount = 0
-        while changeCount <= MAX_CHANGE_COUNT:
-            changed = False
-            for key in grammarToGenerate.keys():
-                res = word.find(key)
-                if res != -1:
-                    changed = True
-                    changeCount += 1
-                    word = word.replace(key, chose_rule_from_grammar(key, grammarToGenerate), 1)
-                    if changeCount >= MAX_CHANGE_COUNT:
-                        changed = False  # only for break
-                        break
-            if not changed:
-                break
-        # determine the consistence of nonterminals:
-        converges = True
+    # word = "S"  # we always start with first nonterminal, with the first entry of dictionary
+    word = 'prog'
+    changeCount = 0
+    while changeCount <= MAX_CHANGE_COUNT:
+        changed = False
         for key in grammarToGenerate.keys():
             res = word.find(key)
-            if res != -1:  # key in word
-                converges = False
-                break
+            if res != -1:
+                changed = True
+                changeCount += 1
+                word = word.replace(key, chose_rule_from_grammar(key, grammarToGenerate), 1)
+                if changeCount >= MAX_CHANGE_COUNT:
+                    changed = False  # only for break
+                    break
+        if not changed:
+            break
+    # determine the consistence of nonterminals:
+    converges = True
+    for key in grammarToGenerate.keys():
+        res = word.find(key)
+        if res != -1:  # key in word
+            converges = False
+            break
 
-        # if converges:
-        #     print("true")
-        #     convergesCount += 1
-        # else:
-        #     print("false")
-        # print(word)
+    if converges:
         return word
-    print("Converges Count = " + str(convergesCount) + " out of " + str(WORD_COUNT))
-    print("Converges Probability = " + str(convergesCount / WORD_COUNT))
-
+    else:
+        return None
 
 # palindrome grammar
 # grammar = {"S": ["", "a", "b", "aSa", "bSb"]}

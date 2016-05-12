@@ -2,25 +2,29 @@ import text_to_dict
 import random
 import main
 import regex
-file = open("Corundum.g4", "r")
+file = open('Corundum.g4', 'r')
 rules, tokens = text_to_dict.text_to_dict(file, True)
-length = 5
+length = 20
 print(tokens)
-for index in range(length):
-    var = main.generate(rules)
-    for key in tokens.keys():
-        index = 0
-        l1 = len(tokens[key])
-        print(l1)
-        if l1 > 1:
+for progNum in range(length):
+    random.seed(progNum)
+    word = main.generate(rules)
+    if word is not None:
+        print(word)
+        for key in tokens.keys():
+            index = 0
+            l1 = len(tokens[key])
             index = random.randint(0, l1-1)
-        print(key)
-        print(tokens[key][index])
-        genReg = regex.fill(tokens[key][index], 0, '')
-        genReg += ' '
+            while True:
+                genReg = regex.fill(tokens[key][index], 0, '')
+                genReg += ' '
+                newWord = word.replace(str(key), genReg, 1)
+                if word != newWord:
+                    word = newWord
+                else:
+                    break;
 
-        var = var.replace(str(key), genReg)
-        file = open('files\\' + str(index) + '.rb', 'w')
-        file.write(var[1:len(var)-1])
+        out_file = open(str(progNum) + '.rb', 'w')      # 'files\\' +
+        out_file.write(word)
 
 
