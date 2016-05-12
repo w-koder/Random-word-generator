@@ -21,7 +21,7 @@ object = ""
 id_first_symbol = string.ascii_letters + '_'
 id_else = string.ascii_letters + '_' + string.digits
 
-def fill(RE, i, object):
+def fill(RE, i, object) -> object:
     while i < RE.__len__():
         if re.match("\(", RE[i]):
             j = i + 1
@@ -96,4 +96,5 @@ def fill(RE, i, object):
             else:
                 object += RE[i]
                 i += 1
+    return object
 fill(REG, 0, object)
