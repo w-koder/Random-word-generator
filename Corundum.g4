@@ -1,5 +1,43 @@
+/*
+ * [The "BSD license"]
+ *  Copyright (c) 2014 Alexander Belov
+ *  All rights reserved.
+ *
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions
+ *  are met:
+ *
+ *  1. Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *  2. Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *  3. The name of the author may not be used to endorse or promote products
+ *     derived from this software without specific prior written permission.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+ *  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ *  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+ *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/*
+ *  A grammar for Ruby-like language written in ANTLR v4.
+ *  You can find compiler into Parrot VM intermediate representation language
+ *  (PIR) here: https://github.com/AlexBelov/corundum
+ */
+
+
 grammar Corundum;
+
 prog : expression_list;
+
 expression_list : expression terminator
                 | expression_list expression terminator
                 | terminator
@@ -169,8 +207,8 @@ dynamic_result : dynamic_result op=( MUL | DIV | MOD ) int_result
                | string_result op=MUL dynamic_result
                | dynamic_result op=( PLUS | MINUS ) int_result
                | int_result op=( PLUS | MINUS ) dynamic_result
-               | dynamic_result op=( PLUS | MINUS )  float_result
-               | float_result op=( PLUS | MINUS )  dynamic_result
+               | dynamic_result op=( PLUS | MINUS )  float_result               
+               | float_result op=( PLUS | MINUS )  dynamic_result                      
                | dynamic_result op=( PLUS | MINUS ) dynamic_result
                | LEFT_RBRACKET dynamic_result RIGHT_RBRACKET
                | dynamic
@@ -183,7 +221,7 @@ dynamic : id
 
 int_result : int_result op=( MUL | DIV | MOD ) int_result
            | int_result op=( PLUS | MINUS ) int_result
-           | LEFT_RBRACKET int_result RIGHT_RBRACKET
+           | LEFT_RBRACKET int_result RIGHT_RBRACKET       
            | int_t
            ;
 
@@ -220,12 +258,12 @@ comp_var : all_result
          | id
          ;
 
-lvalue : id
-       //| id_global
+lvalue : id  
+       //| id_global        
        ;
 
-rvalue : lvalue
-
+rvalue : lvalue 
+        
        | initial_array_assignment
        | array_assignment
 
@@ -239,14 +277,14 @@ rvalue : lvalue
        | string_assignment
        | float_assignment
        | int_assignment
-       | assignment
+       | assignment    
 
        | function_call
        | literal_t
        | bool_t
        | float_t
        | int_t
-       | nil_t
+       | nil_t 
 
        | rvalue EXP rvalue
 
@@ -267,7 +305,7 @@ rvalue : lvalue
 
        | rvalue ( OR | AND ) rvalue
 
-       | LEFT_RBRACKET rvalue RIGHT_RBRACKET
+       | LEFT_RBRACKET rvalue RIGHT_RBRACKET    
        ;
 
 break_expression : BREAK;
@@ -300,11 +338,9 @@ else_token : ELSE;
 
 crlf : CRLF;
 
-fragment ESCAPED_QUOTE : '\\"';
-LITERAL : '"' ( ESCAPED_QUOTE | ~('\n'|'\r') )*? '"'
-        | '\'' ( ESCAPED_QUOTE | ~('\n'|'\r') )*? '\'';
+LITERAL : '"'[a-zA-Z0-9_]*'"';
 
-COMMA : ',';
+COMMA : ',';  
 SEMICOLON : '@';
 CRLF : '\n';
 
@@ -366,12 +402,8 @@ RIGHT_SBRACKET : ']';
 
 NIL : 'nil';
 
-SL_COMMENT : ('#' ~('\r' | '\n')* '\n') -> skip;
-ML_COMMENT : ('=begin' .*? '=end\n') -> skip;
-WS : (' '|'\t')+ -> skip;
-
 INT : [0-9]+;
 FLOAT : [0-9]*'.'[0-9]+;
 ID : [a-zA-Z_][a-zA-Z0-9_]*;
-ID_GLOBAL : '$'ID;
-ID_FUNCTION : ID[?];
+ID_GLOBAL : '$'[a-zA-Z_][a-zA-Z0-9_]*;
+ID_FUNCTION : [a-zA-Z_][a-zA-Z0-9_]*'?';
