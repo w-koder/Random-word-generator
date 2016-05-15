@@ -16,7 +16,7 @@ import string
 import random
 import re
 
-REG = "[a-zA-Z_][a-zA-Z0-9_]*'?'"
+REG = "[0-9]*'.'[0-9]+"
 object = ""
 id_first_symbol = string.ascii_letters + '_'
 id_else = string.ascii_letters + '_' + string.digits
@@ -101,3 +101,4 @@ def fill(RE, i, object) -> object:
                 object += RE[i]
                 i += 1
     return object
+print(fill(REG,0,''))
