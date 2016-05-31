@@ -1,6 +1,6 @@
 import random
 
-import  refactor_test
+import parser_rules
 import regex
 from files1 import text_to_dict
 
@@ -12,10 +12,10 @@ print(tokens)
 for progNum in range(length):
     random.seed(progNum)
     #word = main.generate(rules)
-    word = refactor_test.generate(rules)
+    word = parser_rules.generate(rules)
     if word is not None:
-        print(word)
-        sorted_tokens = sorted(tokens.keys(),key = refactor_test.sort_by_length)
+     #   print(word)
+        sorted_tokens = sorted(tokens.keys(), key=parser_rules.sort_by_length)
         for key in sorted_tokens:
             index = 0
             l1 = len(tokens[key])

@@ -207,8 +207,8 @@ dynamic_result : dynamic_result ( MUL | DIV | MOD ) int_result
                | string_result MUL dynamic_result
                | dynamic_result ( PLUS | MINUS ) int_result
                | int_result ( PLUS | MINUS ) dynamic_result
-               | dynamic_result ( PLUS | MINUS )  float_result               
-               | float_result ( PLUS | MINUS )  dynamic_result                      
+               | dynamic_result ( PLUS | MINUS )  float_result
+               | float_result ( PLUS | MINUS )  dynamic_result
                | dynamic_result ( PLUS | MINUS ) dynamic_result
                | LEFT_RBRACKET dynamic_result RIGHT_RBRACKET
                | dynamic
@@ -221,7 +221,7 @@ dynamic : id
 
 int_result : int_result ( MUL | DIV | MOD ) int_result
            | int_result ( PLUS | MINUS ) int_result
-           | LEFT_RBRACKET int_result RIGHT_RBRACKET       
+           | LEFT_RBRACKET int_result RIGHT_RBRACKET
            | int_t
            ;
 
@@ -258,12 +258,12 @@ comp_var : all_result
          | id
          ;
 
-lvalue : id  
-       //| id_global        
+lvalue : id
+       //| id_global
        ;
 
-rvalue : lvalue 
-        
+rvalue : lvalue
+
        | initial_array_assignment
        | array_assignment
 
@@ -277,14 +277,14 @@ rvalue : lvalue
        | string_assignment
        | float_assignment
        | int_assignment
-       | assignment    
+       | assignment
 
        | function_call
        | literal_t
        | bool_t
        | float_t
        | int_t
-       | nil_t 
+       | nil_t
 
        | rvalue EXP rvalue
 
@@ -305,7 +305,7 @@ rvalue : lvalue
 
        | rvalue ( OR | AND ) rvalue
 
-       | LEFT_RBRACKET rvalue RIGHT_RBRACKET    
+       | LEFT_RBRACKET rvalue RIGHT_RBRACKET
        ;
 
 break_expression : BREAK;
@@ -340,7 +340,7 @@ crlf : CRLF;
 
 LITERAL : '"'[a-zA-Z0-9_]*'"';
 
-COMMA : ',';  
+COMMA : ',';
 SEMICOLON : '.';
 CRLF : '\n';
 
