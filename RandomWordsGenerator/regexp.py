@@ -1,8 +1,3 @@
-# It finally works!
-# Though still only for numbers
-# And there's one thing I don't get:
-# Check-prints show that it works just fine
-# But final print(object) returns empty string
 
 """
 INT : [0-9]+; 
@@ -12,16 +7,12 @@ ID_GLOBAL : '$'ID;
 ID_FUNCTION : ID'?';
 """
 
-import string
-import random
-import re
-
-REG = "[a-zA-Z_][a-zA-Z0-9_]*'?'"
+REG = "[0-9]*'.'[0-9]+"
 object = ""
 id_first_symbol = string.ascii_letters + '_'
 id_else = string.ascii_letters + '_' + string.digits
 
-def fill(RE, i, object) -> object:
+def fill(RE, i, object):
     while i < RE.__len__():
         if re.match("\(", RE[i]):
             j = i + 1
@@ -56,18 +47,22 @@ def fill(RE, i, object) -> object:
                         amount = 1
                     for k in range(amount):
                         object += (random.randint(int(RE[i + 1]), int(RE[i + 3]))).__str__()
+                        #print("branch ", object)
                     if flag == 0:
                         i += 6
                     else:
                         i += 5
                 else:
                     object += (random.randint(int(RE[i + 1]), int(RE[i + 3]))).__str__()
+                    #print("branch ", object)
                     i += 5
             else:
                 object += random.choice(id_first_symbol)
+                #print("first ", object)
                 amount = random.randint(0, 10)
                 for k in range(amount):
                     object += random.choice(id_else)
+                    #print("else ", object)
                 j = i + 1
                 while RE[j] != '*':
                     j += 1
@@ -76,9 +71,9 @@ def fill(RE, i, object) -> object:
             j = i + 1
             while re.match("\'", RE[j]) is None:
                 object += RE[j]
-                print("quote ", object)
+                #print("quote ", object)
                 j += 1
-            i += j + 1
+            i = j + 1
         else:
             if i+1 < RE.__len__():
                 flag = 0
@@ -93,12 +88,15 @@ def fill(RE, i, object) -> object:
                     amount = 1
                 for k in range(amount):
                     object += RE[i]
+                    #print("single ", object)
                 if flag == 0:
                     i += 2
                 else:
                     i += 1
             else:
                 object += RE[i]
+                #print("single ", object)
                 i += 1
     return object
-fill(REG, 0, object)
+
+print(fill(REG, 0, object))
