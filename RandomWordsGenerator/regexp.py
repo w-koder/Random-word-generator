@@ -1,47 +1,47 @@
+# The main idea is to parse given regular expressions into units which can be directly put into token
+# For that we should 'programm' all specific symbols, which can be met in our regular expression, such as *, + and so on
+# Have a fun
 
-"""
-INT : [0-9]+; 
-FLOAT : [0-9]*'.'[0-9]+; 
-ID : [a-zA-Z_][a-zA-Z0-9_]*; 
-ID_GLOBAL : '$'ID; 
-ID_FUNCTION : ID'?';
-"""
+import string
+import random
+import re
 
-REG = "[0-9]*'.'[0-9]+"
-object = ""
-id_first_symbol = string.ascii_letters + '_'
-id_else = string.ascii_letters + '_' + string.digits
+REG = "[a-zA-Z_][a-zA-Z0-9_]*'?'"                           # regular expression (further 're')
+object = ""                                                 # this will be the result of this programm
+id_first_symbol = string.ascii_letters + '_'                # this string contains all latin symbols and symbol '_'
+id_else = string.ascii_letters + '_' + string.digits        # same + all digits. These two are for [a-zA-Z_] re
+maxN = 10                                                   # that's max of possible symbol amount repeated by *, + or ?
 
 def fill(RE, i, object):
-    while i < RE.__len__():
+    while i < RE.__len__():                                 # i - index of current symbol in REG
         if re.match("\(", RE[i]):
             j = i + 1
-            while RE[j] != ')':
+            while RE[j] != ')':                             # j - the end of the content of braces
                 j += 1
-            substring = RE[i+1:j]
+            substring = RE[i+1:j]                           # so we withdraw that content
             if j+1 < RE.__len__():
-                if re.match('\?', RE[j+1]):
-                    amount = random.randint(0, 1)
-                elif re.match('\*', RE[j+1]):
-                    amount = random.randint(0, 10)
+                if re.match('\?', RE[j+1]):                 # this little switch will be met several times here
+                    amount = random.randint(0, 1)           # someday I'll carry it out as independent function
+                elif re.match('\*', RE[j+1]):               # but not today
+                    amount = random.randint(0, maxN)        # it analyzes how many times the content should be repeated
                 elif re.match('\+', RE[j+1]):
-                    amount = random.randint(1, 10)
+                    amount = random.randint(1, maxN)
                 else:
                     amount = 1
-                for k in range(amount):
+                for k in range(amount):                     # so, we repeat it random amount of times, smaller than maxN
                     fill(substring, 0, object)
             else:
                 fill(substring, 0, object)
-        elif re.match("\[", RE[i]):
-            if RE[i+4] == ']':
-                if i+5 < RE.__len__():
+        elif re.match("\[", RE[i]):                         # Further it's pretty much the same: we analyze spec symbol
+            if RE[i+4] == ']':                              # we got and treat it the way it should be. Step by step we
+                if i+5 < RE.__len__():                      # fill our object to the look it matches given re
                     flag = 0
                     if re.match('\?', RE[i + 5]):
                         amount = random.randint(0, 1)
                     elif re.match('\*', RE[i + 5]):
-                        amount = random.randint(0, 10)
+                        amount = random.randint(0, maxN)
                     elif re.match('\+', RE[i + 5]):
-                        amount = random.randint(1, 10)
+                        amount = random.randint(1, maxN)
                     else:
                         flag = 1
                         amount = 1
@@ -59,7 +59,7 @@ def fill(RE, i, object):
             else:
                 object += random.choice(id_first_symbol)
                 #print("first ", object)
-                amount = random.randint(0, 10)
+                amount = random.randint(0, maxN)
                 for k in range(amount):
                     object += random.choice(id_else)
                     #print("else ", object)
@@ -80,9 +80,9 @@ def fill(RE, i, object):
                 if re.match('\?', RE[i + 1]):
                     amount = random.randint(0, 1)
                 elif re.match('\*', RE[i + 1]):
-                    amount = random.randint(0, 10)
+                    amount = random.randint(0, maxN)
                 elif re.match('\+', RE[i + 1]):
-                    amount = random.randint(1, 10)
+                    amount = random.randint(1, maxN)
                 else:
                     flag = 1
                     amount = 1
