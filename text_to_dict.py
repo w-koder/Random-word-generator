@@ -36,6 +36,26 @@ def text_to_dict(file,  rough_splitting_by_bars=False):
                 if file_line[char_index-2:char_index] == "*/":
                     multiline_skip_trigger = False
 
+            # Splitting inputed text to rules and spreading rules across dictionaries
+            elif file_line[char_index] == ';':
+                if grammar_text != '':
+                    line_to_process = file_line.replace("\\n", "\n");
+                    line_to_process = line_to_process.replace("\\n", "\0");
+                    line_to_process = line_to_process.replace("\\a", "\a");
+                    line_to_process = line_to_process.replace("\\b", "\b");
+                    line_to_process = line_to_process.replace("\\t", "\t");
+                    line_to_process = line_to_process.replace("\\v", "\v");
+                    line_to_process = line_to_process.replace("\\f", "\f");
+                    line_to_process = line_to_process.replace("\\r", "\r");
+                    if not (grammar_text.startswith("grammar")
+                        or grammar_text.startswith("//")):
+                        rule = grammar_text.split(':', 1)
+                        if rule[0][0] == rule[0][0].capitalize():
+                            tokens_dict[rule[0]] = rule[1]
+                        else:
+                            rules_dict[rule[0]] = rule[1]
+                grammar_text = ""
+
             if (file_line[char_index] != ' '
                 and file_line[char_index] != '\n'
                 and file_line[char_index] != '\t'
@@ -44,18 +64,6 @@ def text_to_dict(file,  rough_splitting_by_bars=False):
                 and not multiline_skip_trigger
                 and not braces_trigger):
                 grammar_text += file_line[char_index];
-
-    # Splitting inputed text to rules and spreading rules across dictionaries
-    for line in grammar_text.split(';'):
-        if line != '':
-            if (line.startswith("grammar")
-                or line.startswith("//")):
-                continue
-            rule = line.split(':', 1)
-            if rule[0][0] == rule[0][0].capitalize():
-                tokens_dict[rule[0]] = rule[1]
-            else:
-                rules_dict[rule[0]] = rule[1]
 
     if rough_splitting_by_bars:
         # implementig sort of service string to be able to split rules by |
@@ -74,7 +82,7 @@ def text_to_dict(file,  rough_splitting_by_bars=False):
                 if len(service_string_places) > 0:
                     new_rule = rule[:service_string_places[0]]
                     for i in range(len(service_string_places)):
-                        new_rule += "%SERVICE_STRING%"
+                        new_rule += "%SERVICE_VERTICAL_SLASH_STRING%"
                         if i < len(service_string_places)-1:
                             new_rule += rule[service_string_places[i] + 1:service_string_places[i + 1]]
                         else :
@@ -139,13 +147,13 @@ def text_to_dict(file,  rough_splitting_by_bars=False):
         for key, rule in rules_dict.items():
             new_rules = []
             for subrule in split_rule_by_bar(rule):
-                new_rules.append (subrule.replace("%SERVICE_STRING%", "|"))
+                new_rules.append (subrule.replace("%SERVICE_VERTICAL_SLASH_STRING%", "|"))
             rules_dict[key] = new_rules
 
         for key, rule in tokens_dict.items():
             new_rules = rule.split("|")
             for subrule in new_rules:
-                new_rules.append(subrule.replace("%SERVICE_STRING%", "|"))
+                new_rules.append(subrule.replace("%SERVICE_VERTICAL_SLASH_STRING%", "|"))
             tokens_dict[key] = new_rules
 
     return rules_dict, tokens_dict
